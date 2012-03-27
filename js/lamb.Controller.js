@@ -8,7 +8,12 @@
   }
 
   Controller.prototype.visit = function(location) {
-    
+    this.radio.setSource(
+      new lamb.Radio.Source({
+        type: 'youtube',
+        youtubeID: 'V44Kj9FfBMg'
+      })
+    );
   };
 
 }());

@@ -9,26 +9,25 @@
     ytEvents.emit('ready:' + id);
   };
 
-
-
-  function YoutubeSource(data) {
+  function YoutubeSource(data, id) {
+    console.log(this);
     this.data = data;
+    this.id = id;
     this.setupDOM();
     this.setupEvents();
-    this.get();
   }
 
-  YoutubeSource.prototype = Object.create(lamb.EventEmitter);
+  YoutubeSource.prototype = Object.create(lamb.EventEmitter.prototype);
 
   YoutubeSource.prototype.setupDOM = function() {
-    this.dom = $('<div>').css({
-      position: 'absolute',
-      top: -9999,
-      left: -9999,
-      visibility: 'hidden'
+    this.dom = $('<div>').attr('id', this.id).css({
+      //position: 'absolute',
+      //top: -9999,
+      //left: -9999,
+      //visibility: 'hidden'
     }).appendTo(
-      RadioSource.container ||
-      (RadioSource.container = $('<div>').appendTo('body'))
+      YoutubeSource.container ||
+      (YoutubeSource.container = $('<div>').appendTo('body'))
     );
   };
 
@@ -43,7 +42,15 @@
 
     this.once('ready', function() {
       alert('I am ready');
+      this.ytElement = document.getElementById(this.id);
+      this.emit('load');
     });
+
+    console.log('Get->',       'http://www.youtube.com/v/' +
+        this.data.youtubeID +
+      '?enablejsapi=1&playerapiid=' +
+        this.id +
+      '&version=3')
 
     swfobject.embedSWF(
       'http://www.youtube.com/v/' +
@@ -51,7 +58,7 @@
       '?enablejsapi=1&playerapiid=' +
         this.id +
       '&version=3',
-      'ytapiplayer',
+      this.id,
       '425',
       '356',
       '8',
@@ -61,6 +68,13 @@
       { id: this.id }
     );
 
-  }
+    
+
+  };
+
+  YoutubeSource.prototype.play = function() {
+    console.log(this.ytElement);
+    this.ytElement.playVideo();
+  };
 
 }());
